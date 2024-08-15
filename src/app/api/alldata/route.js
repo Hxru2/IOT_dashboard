@@ -36,11 +36,11 @@ export async function GET() {
 export async function POST(request) {
   try {
     // รับข้อมูลจากคำขอ
-    const { LDR, VR, TEMP, DISTANCE } = await request.json();
+    const { ldr, vr, temp, distance } = await request.json();
 
     // คำสั่ง SQL สำหรับการเพิ่มข้อมูลลงในฐานข้อมูล
-    const query = 'INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [LDR, VR, TEMP, DISTANCE];
+    const query = 'INSERT INTO "NRD012" (ldr, vr, temp, distance) VALUES ($1, $2, $3, $4) RETURNING *';
+    const values = [ldr, vr, temp, distance];
     
     // เชื่อมต่อกับฐานข้อมูลและรันคำสั่ง
     const result = await dbConnect(query, values);

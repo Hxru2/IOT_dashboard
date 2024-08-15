@@ -46,14 +46,14 @@ export default function HistoryPage() {
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.ID}>
-                <td>{item.ID}</td>
-                <td>{item.LDR}</td>
-                <td>{item.VR}</td>
-                <td>{item.TEMP}</td>
-                <td>{item.DISTANCE}</td>
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.ldr}</td>
+                <td>{item.vr}</td>
+                <td>{item.temp}</td>
+                <td>{item.distance}</td>
                 <td>
-                  {new Date(item.Date).toLocaleString('th-TH', {
+                  {new Date(item.date).toLocaleString('th-TH', {
                     timeZone: 'Asia/Bangkok',
                     dateStyle: 'short',
                     timeStyle: 'short',

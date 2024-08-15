@@ -13,12 +13,12 @@ export async function POST(request) {
     await client.connect();
 
     // Parse JSON from the request
-    const { LDR, VR, TEMP, DISTANCE } = await request.json();
+    const { ldr, vr, temp, distance } = await request.json();
 
     // Execute SQL query to insert data
     const res = await client.query(
-      'INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *',
-      [LDR, VR, TEMP, DISTANCE]
+      'INSERT INTO "NRD012" (ldr, vr, temp, distance) VALUES ($1, $2, $3, $4) RETURNING *',
+      [ldr, vr, temp, distance]
     );
 
     // Return successful response
@@ -38,6 +38,5 @@ export async function POST(request) {
     await client.end();
   }
 }
-
 
 
