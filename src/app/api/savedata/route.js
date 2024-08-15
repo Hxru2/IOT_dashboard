@@ -12,9 +12,9 @@ client.connect();
 
 export async function POST(request) {
   try {
-    const { analog1, analog2, digital1, digital2 } = await request.json();
+    const { LDR, VR, TEMP, DISTANCE } = await request.json();
     // Hash password
-    const res = await client.query('INSERT INTO "ATH034" (analog1, analog2, digital1, digital2) VALUES ($1, $2, $3, $4) RETURNING *', [analog1, analog2, digital1, digital2]);
+    const res = await client.query('INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *', [LDR, VR, TEMP, DISTANCE]);
     return new Response(JSON.stringify(res.rows[0]), {
       status: 201,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
