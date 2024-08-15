@@ -1,11 +1,12 @@
+// dbConnect.js
 import { Pool } from 'pg';
 
+// ตั้งค่าการเชื่อมต่อฐานข้อมูล
 const pool = new Pool({
-  user: 'postgres',
-  host: 'itdev.cmtc.ac.th',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5434,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 export default async function dbConnect(query, values) {
