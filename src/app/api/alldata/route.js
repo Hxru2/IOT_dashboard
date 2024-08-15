@@ -35,20 +35,28 @@ export async function GET() {
 }
 export async function POST(request) {
   try {
-  const { firstname, lastname, username, password } = await request.json();
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  console.log(hashedPassword);
-  const res = await client.query('INSERT INTO tbl_users (firstname, lastname, username, password) VALUES ($1, $2, $3, $4) RETURNING *', [firstname, lastname, username, hashedPassword]);
-  return new Response(JSON.stringify(res.rows[0]), {
-  status: 201,
-  headers: { 'Access-Control-Allow-Origin':'*','Content-Type': 'application/json' },
-  });
+    // รับข้อมูลจากคำขอ
+    const { LDR, VR, TEMP, DISTANCE } = await request.json();
+
+    // คำสั่ง SQL สำหรับการเพิ่มข้อมูลลงในฐานข้อมูล
+    const query = 'INSERT INTO NRD012 (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *';
+    const values = [LDR, VR, TEMP, DISTANCE];
+    
+    // เชื่อมต่อกับฐานข้อมูลและรันคำสั่ง
+    const result = await dbConnect(query, values);
+
+    // ส่งข้อมูลกลับไปยังผู้ใช้
+    return new Response(JSON.stringify({ message: 'Data saved successfully', data: result.rows[0] }), {
+      status: 201,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-  console.error(error);
-  return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-  status: 500,
-  headers: { 'Access-Control-Allow-Origin':'*','Content-Type': 'application/json' },
-  });
+    console.error('Error saving data:', error);
+
+    // ส่งข้อผิดพลาดกลับไปยังผู้ใช้
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+    });
   }
-  }
+}
