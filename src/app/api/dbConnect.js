@@ -1,19 +1,18 @@
-import { Pool } from 'pg';
+import { Client } from 'pg';
 
-const pool = new Pool({
-  user: 'postgres',
-  host: 'itdev.cmtc.ac.th',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5434,
-});
+let client;
 
-export default async function dbConnect(query, values) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(query, values);
-    return result;
-  } finally {
-    client.release();
+async function dbConnect() {
+  if (!client) {
+    client = new Client({
+      connectionString: process.env.DATABASE_URL, // ใช้ ENV สำหรับ URL ของฐานข้อมูล
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    await client.connect();
   }
+  return client;
 }
+
+export default dbConnect;

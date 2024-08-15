@@ -12,7 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     // ดึงข้อมูลเซ็นเซอร์จาก API ทุกครั้งที่หน้าโหลด
-    fetch('/api/getSensorData')
+    fetch('/api/alldata')
       .then((response) => response.json())
       .then((data) => setSensorData(data))
       .catch((error) => console.error('Error fetching data:', error));
