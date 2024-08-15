@@ -22,10 +22,10 @@ export default function Home() {
     <div style={styles.page}>
       <h1>Dashboard</h1>
       <div style={styles.container}>
-        <div style={styles.dataItem}>LDR: {sensorData.ldr}</div>
-        <div style={styles.dataItem}>VR: {sensorData.vr}</div>
-        <div style={styles.dataItem}>Temperature: {sensorData.temp}°C</div>
-        <div style={styles.dataItem}>Distance: {sensorData.distance} cm</div>
+        <div style={styles.dataItem}>LDR: {sensorData.LDR}</div>
+        <div style={styles.dataItem}>VR: {sensorData.VR}</div>
+        <div style={styles.dataItem}>Temperature: {sensorData.TEMP}°C</div>
+        <div style={styles.dataItem}>Distance: {sensorData.DISTANCE} cm</div>
       </div>
     </div>
   );
