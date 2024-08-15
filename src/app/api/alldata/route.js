@@ -34,29 +34,37 @@ export async function GET() {
   }
 }
 export async function POST(request) {
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+
   try {
-    // รับข้อมูลจากคำขอ
+    // Connect to the database
+    await client.connect();
+
+    // Parse JSON from the request
     const { ldr, vr, temp, distance } = await request.json();
 
-    // คำสั่ง SQL สำหรับการเพิ่มข้อมูลลงในฐานข้อมูล
-    const query = 'INSERT INTO "NRD012" (ldr, vr, temp, distance) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [ldr, vr, temp, distance];
-    
-    // เชื่อมต่อกับฐานข้อมูลและรันคำสั่ง
-    const result = await dbConnect(query, values);
+    // Execute SQL query to insert data
+    const res = await client.query(
+      'INSERT INTO "NRD012" (ldr, vr, temp, distance) VALUES ($1, $2, $3, $4) RETURNING *',
+      [ldr, vr, temp, distance]
+    );
 
-    // ส่งข้อมูลกลับไปยังผู้ใช้
-    return new Response(JSON.stringify({ message: 'Data saved successfully', data: result.rows[0] }), {
+    // Return successful response
+    return new Response(JSON.stringify(res.rows[0]), {
       status: 201,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error saving data:', error);
-
-    // ส่งข้อผิดพลาดกลับไปยังผู้ใช้
+    // Log and return error response
+    console.error('Error:', error.message);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
     });
+  } finally {
+    // Close the database connection
+    await client.end();
   }
 }
