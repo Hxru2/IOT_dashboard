@@ -5,7 +5,7 @@ const pool = new Pool({
   host: 'itdev.cmtc.ac.th',
   database: 'postgres',
   password: 'postgres',
-  port: 5052,
+  port: 5434,
 });
 
 export default async function dbConnect(query, values) {
