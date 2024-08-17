@@ -3,10 +3,10 @@ import React from 'react';
 import styles from './Dashboard.module.css';
 
 export default async function Dashboard() {
-  let latestData;
+  let latestData = null;
 
   try {
-    const response = await fetch('https://iot-dashboard-sand-tau.vercel.app/api/latestData');
+    const response = await fetch('/api/latestData'); // Adjust to match your actual endpoint
     if (!response.ok) {
       throw new Error("Failed to fetch latest data");
     }
@@ -19,7 +19,7 @@ export default async function Dashboard() {
   return (
     <div className={styles.dashboard}>
       <h1 className={styles.heading}>Latest Sensor Data</h1>
-      {latestData ? (
+      {latestData && Object.keys(latestData).length > 0 ? (
         <table className={styles.table}>
           <thead>
             <tr>
