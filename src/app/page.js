@@ -1,53 +1,50 @@
-"use client";
+// app/dashboard/page.js
+import React from 'react';
+import styles from './Dashboard.module.css';
 
-import { useState, useEffect } from 'react';
+export default async function Dashboard() {
+  let latestData;
 
-export default function Home() {
-  const [sensorData, setSensorData] = useState({
-    ldr: 0,
-    vr: 0,
-    temp: 0,
-    distance: 0,
-  });
-
-  useEffect(() => {
-    // ดึงข้อมูลเซ็นเซอร์จาก API ทุกครั้งที่หน้าโหลด
-    fetch('/api/alldata')
-      .then((response) => response.json())
-      .then((data) => setSensorData(data))
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);
+  try {
+    const response = await fetch('https://iot-dashboard-sand-tau.vercel.app/api/latestData');
+    if (!response.ok) {
+      throw new Error("Failed to fetch latest data");
+    }
+    latestData = await response.json();
+  } catch (error) {
+    console.error("Error fetching latest data:", error);
+    latestData = null;
+  }
 
   return (
-    <div style={styles.page}>
-      <h1>Dashboard</h1>
-      <div style={styles.container}>
-        <div style={styles.dataItem}>LDR: {sensorData.LDR}</div>
-        <div style={styles.dataItem}>VR: {sensorData.VR}</div>
-        <div style={styles.dataItem}>Temperature: {sensorData.TEMP}°C</div>
-        <div style={styles.dataItem}>Distance: {sensorData.DISTANCE} cm</div>
-      </div>
+    <div className={styles.dashboard}>
+      <h1 className={styles.heading}>Latest Sensor Data</h1>
+      {latestData ? (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>LDR</th>
+              <th>VR</th>
+              <th>Temperature</th>
+              <th>Distance</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{latestData.id}</td>
+              <td>{latestData.ldr}</td>
+              <td>{latestData.vr}</td>
+              <td>{latestData.temperature}</td>
+              <td>{latestData.distance}</td>
+              <td>{latestData.createdAt}</td>
+            </tr>
+          </tbody>
+        </table>
+      ) : (
+        <p>No data available</p>
+      )}
     </div>
   );
 }
-
-const styles = {
-  page: {
-    textAlign: 'center',
-    padding: '20px',
-    backgroundColor: '#f0f0f0',
-    height: '100vh',
-  },
-  container: {
-    margin: '20px auto',
-    padding: '20px',
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-    display: 'inline-block',
-  },
-  dataItem: {
-    margin: '10px 0',
-    fontSize: '1.2em',
-  },
-};

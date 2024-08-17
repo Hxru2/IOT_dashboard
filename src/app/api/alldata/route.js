@@ -34,20 +34,19 @@ export async function GET() {
   }
 }
 export async function POST(request) {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-  });
-
   try {
-    // Connect to the database
-    await client.connect();
-
     // Parse JSON from the request
-    const { ldr, vr, temp, distance } = await request.json();
+    const { LDR, VR, TEMP, DISTANCE } = await request.json();
+    
+    // Ensure data types are correct
+    const ldr = parseInt(LDR, 10);
+    const vr = parseInt(VR, 10);
+    const temp = parseFloat(TEMP);
+    const distance = parseFloat(DISTANCE);
 
     // Execute SQL query to insert data
     const res = await client.query(
-      'INSERT INTO "NRD012" (ldr, vr, temp, distance) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *',
       [ldr, vr, temp, distance]
     );
 
