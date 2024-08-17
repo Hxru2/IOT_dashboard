@@ -1,5 +1,5 @@
 // app/api/latestData/route.js
-import dbConnect from '../dbConnect';
+import dbConnect from '../../dbConnect';
 
 export async function GET() {
   try {
@@ -12,13 +12,13 @@ export async function GET() {
     `);
     return new Response(JSON.stringify(result.rows[0] || {}), {
       status: 200,
-      headers: { 'Access-Control-Allow-Origin': '*','Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Access-Control-Allow-Origin': '*','Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

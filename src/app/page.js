@@ -11,6 +11,7 @@ export default async function Dashboard() {
       throw new Error("Failed to fetch latest data");
     }
     latestData = await response.json();
+    console.log("Fetched data:", latestData); // Log fetched data for debugging
   } catch (error) {
     console.error("Error fetching latest data:", error);
     latestData = null;
