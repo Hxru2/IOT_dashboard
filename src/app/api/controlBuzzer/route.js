@@ -1,4 +1,14 @@
 import dbConnect from '../dbConnect';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+client.connect();
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -8,7 +18,7 @@ export default async function handler(req, res) {
 
       // Insert the command into the database for the buzzer
       await client.query(`
-        INSERT INTO "ControlCommands" ("command", "createdAt")
+        INSERT INTO "NRD012" ("command", "date")
         VALUES ($1, NOW())
       `, ['BUZZER_ON']);
 

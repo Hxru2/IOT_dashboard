@@ -1,4 +1,14 @@
 import dbConnect from '../dbConnect';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+client.connect();
 
 export async function POST(req) {
   try {
@@ -7,7 +17,7 @@ export async function POST(req) {
 
     // Insert the command into the database for the RGB lights
     await client.query(`
-      INSERT INTO "ControlCommands" ("command", "createdAt")
+      INSERT INTO "NRD012" ("command", "date")
       VALUES ($1, NOW())
     `, ['RGB_ON']);
 
