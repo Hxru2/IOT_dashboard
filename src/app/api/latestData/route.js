@@ -1,5 +1,5 @@
 // app/api/latestData/route.js
-import dbConnect from '../../dbConnect';
+import dbConnect from '../dbConnect';
 
 export async function GET() {
   try {
