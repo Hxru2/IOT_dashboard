@@ -1,19 +1,17 @@
 import { Client } from 'pg';
 import dotenv from 'dotenv';
 
-
 dotenv.config();
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
 });
 
+// Connect to the database once
 client.connect();
 
-
-
-//src/app/api/route.js
-//-------------------------------------------------------------------------------------
+// src/app/api/route.js
+// -------------------------------------------------------------------------------------
 export async function GET() {
   try {
     const result = await client.query('SELECT * FROM "NRD012"');
@@ -21,18 +19,22 @@ export async function GET() {
       status: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache"
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
     });
   } catch (error) {
-
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+    console.error('GET Error:', error.stack || error.message);
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Access-Control-Allow-Origin': '*', "Content-Type": "application/json" },
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
     });
   }
 }
+
 export async function POST(request) {
   try {
     // Parse JSON from the request
@@ -53,17 +55,19 @@ export async function POST(request) {
     // Return successful response
     return new Response(JSON.stringify(res.rows[0]), {
       status: 201,
-      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
-    // Log and return error response
-    console.error('Error:', error.message);
+    console.error('POST Error:', error.stack || error.message);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
     });
-  } finally {
-    // Close the database connection
-    await client.end();
   }
 }
