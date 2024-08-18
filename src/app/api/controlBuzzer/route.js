@@ -1,20 +1,15 @@
 import dbConnect from '../dbConnect';
 import dotenv from 'dotenv';
-
+import { Client } from 'pg';  // Ensure Client is imported
 
 dotenv.config();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
-client.connect();
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
+    let client;
     try {
       // Connect to the database
-      const client = await dbConnect();
+      client = await dbConnect();
 
       // Insert the command into the database for the buzzer
       await client.query(`
@@ -25,10 +20,15 @@ export default async function handler(req, res) {
       console.log("Buzzer control command stored in the database");
 
       // Return a success response
-      res.status(200).json({ message: 'Buzzer control command stored successfully' });
+      res.status(200).json({ message: 'Buzzer control command received' });
     } catch (error) {
-      console.error("Error storing buzzer command:", error);
+      console.error('Error in controlBuzzer route:', error);
       res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+      // Ensure the database client is closed
+      if (client) {
+        await client.end();
+      }
     }
   } else {
     // Handle any other HTTP method

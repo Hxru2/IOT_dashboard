@@ -1,19 +1,16 @@
-// pages/api/getControlCommand.js
 import dbConnect from '../dbConnect';
 import dotenv from 'dotenv';
-
+import { Client } from 'pg';  // Import Client from pg
 
 dotenv.config();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
-client.connect();
-
 export default async function handler(req, res) {
+    let client;
     try {
-        const client = await dbConnect();
+        // Connect to the database using dbConnect
+        client = await dbConnect();
+
+        // Query the latest command
         const result = await client.query(`
             SELECT "command"
             FROM "NRD012"
@@ -29,5 +26,10 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error("Error fetching control command:", error);
         res.status(500).json({ error: 'Failed to fetch control command' });
+    } finally {
+        // Ensure the database connection is closed
+        if (client) {
+            await client.end();
+        }
     }
 }

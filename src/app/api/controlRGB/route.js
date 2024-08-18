@@ -1,19 +1,14 @@
 import dbConnect from '../dbConnect';
 import dotenv from 'dotenv';
-
+import { Client } from 'pg';  // Make sure to import Client
 
 dotenv.config();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
-client.connect();
-
 export async function POST(req) {
+  let client;
   try {
     // Connect to the database
-    const client = await dbConnect();
+    client = await dbConnect();
 
     // Insert the command into the database for the RGB lights
     await client.query(`
@@ -34,5 +29,10 @@ export async function POST(req) {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
+  } finally {
+    // Ensure the database client is closed
+    if (client) {
+      await client.end();
+    }
   }
 }
