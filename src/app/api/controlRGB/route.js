@@ -1,28 +1,28 @@
 import dbConnect from '../dbConnect';
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      // Connect to the database
-      const client = await dbConnect();
+export async function POST(req) {
+  try {
+    // Connect to the database
+    const client = await dbConnect();
 
-      // Insert the command into the database for the RGB lights
-      await client.query(`
-        INSERT INTO "ControlCommands" ("command", "createdAt")
-        VALUES ($1, NOW())
-      `, ['RGB_ON']);
+    // Insert the command into the database for the RGB lights
+    await client.query(`
+      INSERT INTO "ControlCommands" ("command", "createdAt")
+      VALUES ($1, NOW())
+    `, ['RGB_ON']);
 
-      console.log("RGB control command stored in the database");
+    console.log("RGB control command stored in the database");
 
-      // Return a success response
-      res.status(200).json({ message: 'RGB control command stored successfully' });
-    } catch (error) {
-      console.error("Error storing RGB command:", error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  } else {
-    // Handle any other HTTP method
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    // Return a success response
+    return new Response(JSON.stringify({ message: 'RGB control command stored successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error("Error storing RGB command:", error);
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
