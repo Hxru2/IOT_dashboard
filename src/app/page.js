@@ -1,4 +1,3 @@
-// app/dashboard/page.js
 "use client";
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
@@ -12,7 +11,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default function Dashboard() {
   const [lastdata, setLastData] = useState([]);
 
-  
   async function fetchlastData() {
     try {
       const res = await fetch("/api/lastestData");
@@ -24,7 +22,6 @@ export default function Dashboard() {
     }
   }
 
-  // Bar Chart Data and Options
   const chartData1 = lastdata.length > 0 ? {
     labels: ['LDR', 'VR'],
     datasets: lastdata.map((dataPoint, index) => ({
@@ -33,8 +30,6 @@ export default function Dashboard() {
       backgroundColor: [
         'rgba(75, 192, 192, 0.6)',
         'rgba(153, 102, 255, 0.6)',
-        'rgba(255, 159, 64, 0.6)',
-        'rgba(255, 99, 132, 0.6)',
       ],
     })),
   } : null;
@@ -45,15 +40,11 @@ export default function Dashboard() {
       label: `Data Point ${index + 1}`,
       data: [dataPoint.temp, dataPoint.distance],
       backgroundColor: [
-        'rgba(75, 192, 192, 0.6)',
-        'rgba(153, 102, 255, 0.6)',
         'rgba(255, 159, 64, 0.6)',
         'rgba(255, 99, 132, 0.6)',
       ],
     })),
   } : null;
-
-
 
   const chartOptions = {
     responsive: true,
@@ -70,14 +61,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchlastData();
-  },[])
+  }, []);
 
   return (
     <div className={styles.dashboard}>
       <h1 className={styles.heading}>Latest Sensor Data</h1>
 
       <div className={styles.chartRow}>
-        {/* First Bar Chart */}
         {lastdata.length > 0 && chartData1 ? (
           <div className={styles.chartContainer}>
             <h2>LDR and VR</h2>
@@ -87,7 +77,6 @@ export default function Dashboard() {
           <p>No data available for LDR and VR chart</p>
         )}
 
-        {/* Second Bar Chart */}
         {lastdata.length > 0 && chartData2 ? (
           <div className={styles.chartContainer}>
             <h2>Temperature and Distance</h2>
@@ -97,37 +86,37 @@ export default function Dashboard() {
           <p>No data available for Temperature and Distance chart</p>
         )}
       </div>
-      {/* Data Table */}
-      <table className="table table-striped table-bordered">
-          <thead className="thead-dark">
-            <tr>
-              <th>ID</th>
-              <th>LDR</th>
-              <th>VR</th>
-              <th>Temperature</th>
-              <th>Distance</th>
-              <th>Create At</th>
-            </tr>
-          </thead>
-          <tbody>
+
+      <table className={`table table-striped table-bordered ${styles.table}`}>
+        <thead className="thead-dark">
+          <tr>
+            <th>ID</th>
+            <th>LDR</th>
+            <th>VR</th>
+            <th>Temperature</th>
+            <th>Distance</th>
+            <th>Create At</th>
+          </tr>
+        </thead>
+        <tbody>
           {lastdata.map((data) => (
-              <tr key={data.id}>
-                <td>{data.id}</td>
-                <td>{data.ldr}</td>
-                <td>{data.vr}</td>
-                <td>{data.temp}</td>
-                <td>{data.distance}</td>
-                <td>
-                  {new Date(data.date).toLocaleString('th-TH', {
-                    timeZone: 'Asia/Bangkok',
-                    dateStyle: 'short',
-                    timeStyle: 'short',
-                  })}
-                </td>
-              </tr>
+            <tr key={data.id}>
+              <td>{data.id}</td>
+              <td>{data.ldr}</td>
+              <td>{data.vr}</td>
+              <td>{data.temp}</td>
+              <td>{data.distance}</td>
+              <td>
+                {new Date(data.date).toLocaleString('th-TH', {
+                  timeZone: 'Asia/Bangkok',
+                  dateStyle: 'short',
+                  timeStyle: 'short',
+                })}
+              </td>
+            </tr>
           ))}
-          </tbody>
-        </table>
+        </tbody>
+      </table>
     </div>
   );
 }

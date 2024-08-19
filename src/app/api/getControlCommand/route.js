@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         const result = await client.query(`
             SELECT "command"
             FROM "NRD012"
-            ORDER BY "timestamp" DESC
+            ORDER BY "date" DESC
             LIMIT 1
         `);
 
