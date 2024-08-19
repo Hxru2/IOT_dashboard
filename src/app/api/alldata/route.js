@@ -37,29 +37,31 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    const body = await request.json();
+    console.log(body);
     // Parse JSON from the request
-    const { LDR, VR, TEMP, DISTANCE } = await request.json();
+    // const { LDR, VR, TEMP, DISTANCE } = await request.json();
     
-    // Ensure data types are correct
-    const ldr = parseInt(LDR, 10);
-    const vr = parseInt(VR, 10);
-    const temp = parseFloat(TEMP);
-    const distance = parseFloat(DISTANCE);
+    // // Ensure data types are correct
+    // const ldr = parseInt(LDR, 10);
+    // const vr = parseInt(VR, 10);
+    // const temp = parseFloat(TEMP);
+    // const distance = parseFloat(DISTANCE);
 
-    // Execute SQL query to insert data
-    const res = await client.query(
-      'INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *',
-      [ldr, vr, temp, distance]
-    );
+    // // Execute SQL query to insert data
+    // const res = await client.query(
+    //   'INSERT INTO "NRD012" (LDR, VR, TEMP, DISTANCE) VALUES ($1, $2, $3, $4) RETURNING *',
+    //   [ldr, vr, temp, distance]
+    // );
 
-    // Return successful response
-    return new Response(JSON.stringify(res.rows[0]), {
-      status: 201,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
-    });
+    // // Return successful response
+    // return new Response(JSON.stringify(res.rows[0]), {
+    //   status: 201,
+    //   headers: {
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
   } catch (error) {
     console.error('POST Error:', error.stack || error.message);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
