@@ -15,7 +15,7 @@ client.connect();
 export async function POST(request) {
   try {
       const { command } = await request.json();
-      if (command !== 'RGB_ON' && command !== 'BUZZER_ON') {
+      if (command !== 'RGB_ON' && command !== 'BUZZER_ON' && command !== 'off') {
           throw new Error('Invalid status');
       }
 
