@@ -7,11 +7,8 @@ const client = new Client({
     connectionString: process.env.DATABASE_URL,
 });
 
-// Connect to the database once
 client.connect();
 
-// src/app/api/route.js
-// -------------------------------------------------------------------------------------
 export async function GET() {
     try {
         const result = await client.query(`
@@ -21,24 +18,22 @@ export async function GET() {
             LIMIT 1
         `);
 
+        const responseHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',  // Ensure no caching
+        };
+
         if (result.rows.length > 0) {
             return new Response(JSON.stringify(result.rows[0]), {
                 status: 200,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json',
-                    'Cache-Control': "no-cache, no-store, max-age=0, must-revalidate",
-                },
+                headers: responseHeaders,
             });
         } else {
-            return new Response(JSON.stringify({ message: "No commands found" }, {
+            return new Response(JSON.stringify({ message: "No commands found" }), {
                 status: 200,
-                headers: {  
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json',
-                    'Cache-Control': "no-cache, no-store, max-age=0, must-revalidate",
-                },
-            }));
+                headers: responseHeaders,
+            });
         }
     } catch (error) {
         console.error('GET Error:', error.stack || error.message);
