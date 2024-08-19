@@ -17,7 +17,7 @@ export async function GET() {
         const result = await client.query(`
             SELECT command
             FROM "NRD012"
-            ORDER BY "date" DESC
+            ORDER BY "id" DESC
             LIMIT 1
         `);
 
