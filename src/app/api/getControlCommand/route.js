@@ -27,16 +27,16 @@ export async function GET() {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache',
+                    'Cache-Control': "no-cache, no-store, max-age=0, must-revalidate",
                 },
             });
         } else {
             return new Response(JSON.stringify({ message: "No commands found" }, {
                 status: 200,
-                headers: {
+                headers: {  
                     'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache',
+                    'Cache-Control': "no-cache, no-store, max-age=0, must-revalidate",
                 },
             }));
         }
