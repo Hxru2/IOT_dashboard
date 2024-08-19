@@ -5,32 +5,31 @@ import Image from "next/image";
 import Logo from '../../public/logo.png';
 import styles from '../app/nav.module.css'; 
 
-const controlRGB = async () => {
+const updateLEDStatus = async (status) => {
   try {
-    const updateLEDStatus = (status) => {
-      fetch('/api/getControlCommand', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status }),
-      })
-      .then(response => response.json())
-      .then(data => {
-          console.log('Response Data:', data);  // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
-          if (data.success) {
-              alert(`LED status updated to ${status}`);
-          } else {
-              alert('Failed to update LED status');
-          }
-      })
-      .catch(error => {
-          console.error('Error updating LED status:', error);
-          alert('Error updating LED status');
-      });
-  };
+    const response = await fetch('/api/getControlCommand', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
 
+    const data = await response.json();
 
+    console.log('Response Data:', data);  // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
+    if (data.success) {
+      alert(`LED status updated to ${status}`);
+    } else {
+      alert('Failed to update LED status');
+    }
+  } catch (error) {
+    console.error('Error updating LED status:', error);
+    alert('Error updating LED status');
+  }
+};
+
+const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
@@ -57,4 +56,6 @@ const controlRGB = async () => {
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
