@@ -5,27 +5,27 @@ import Image from "next/image";
 import Logo from '../../public/logo.png';
 import styles from '../app/nav.module.css'; 
 
-const updateLEDStatus = async (status) => {
+const updateLEDStatus = async (command) => {
   try {
     const response = await fetch('/api/getControlCommand', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ command }),
     });
 
     const data = await response.json();
 
     console.log('Response Data:', data);  // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
     if (data.success) {
-      alert(`LED status updated to ${status}`);
+      alert(`Command updated to ${command}`);
     } else {
-      alert('Failed to update LED status');
+      alert('Failed to update Command');
     }
   } catch (error) {
-    console.error('Error updating LED status:', error);
-    alert('Error updating LED status');
+    console.error('Error updating Command:', error);
+    alert('Error updating Command');
   }
 };
 
