@@ -1,16 +1,30 @@
-import dbConnect from '../dbConnect';
+import { Client } from 'pg';
 import dotenv from 'dotenv';
-import { Client } from 'pg';  // Make sure to import Client
 
 dotenv.config();
 
+// Initialize and manage the database connection
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+// Create a connection manager that only connects if not already connected
+async function dbConnect() {
+  if (!client._connected) {
+    await client.connect();
+    client._connected = true; // Set a flag to indicate the connection is established
+  }
+  return client;
+}
+
+// Handle POST requests to store the RGB command
 export async function POST(req) {
   let client;
   try {
     // Connect to the database
     client = await dbConnect();
 
-    // Insert the command into the database for the RGB lights
+    // Insert the RGB control command into the database
     await client.query(`
       INSERT INTO "NRD012" ("command", "date")
       VALUES ($1, NOW())
@@ -18,8 +32,19 @@ export async function POST(req) {
 
     console.log("RGB control command stored in the database");
 
-    // Return a success response
-    return new Response(JSON.stringify({ message: 'RGB control command stored successfully' }), {
+    // Fetch the latest command from the database
+    const result = await client.query(`
+      SELECT "command", "date"
+      FROM "NRD012"
+      ORDER BY "date" DESC
+      LIMIT 1
+    `);
+
+    // Return the latest data
+    return new Response(JSON.stringify({
+      message: 'RGB control command stored successfully',
+      latestCommand: result.rows[0], // The most recent command
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -30,9 +55,10 @@ export async function POST(req) {
       headers: { 'Content-Type': 'application/json' },
     });
   } finally {
-    // Ensure the database client is closed
+    // Reset the client connection state after the work is done
     if (client) {
       await client.end();
+      client._connected = false; // Reset the connection flag
     }
   }
 }

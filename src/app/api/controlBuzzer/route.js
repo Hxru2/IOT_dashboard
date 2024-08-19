@@ -1,8 +1,22 @@
-import dbConnect from '../dbConnect';
+import { Client } from 'pg';
 import dotenv from 'dotenv';
-import { Client } from 'pg';  // Ensure Client is imported
 
 dotenv.config();
+
+// Initialize and manage the database connection
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
+
+// Create a connection manager that only connects if not already connected
+async function dbConnect() {
+  if (!client._connected) {
+    await client.connect();
+    client._connected = true; // Set a flag to indicate the connection is established
+  }
+  return client;
+}
+
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

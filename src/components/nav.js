@@ -5,36 +5,31 @@ import Image from "next/image";
 import Logo from '../../public/logo.png';
 import styles from '../app/nav.module.css'; 
 
-export default function Nav() {
-  const controlRGB = async () => {
-    try {
-      const response = await fetch('/api/controlRGB', {
-        method: 'POST',
+const controlRGB = async () => {
+  try {
+    const updateLEDStatus = (status) => {
+      fetch('/api/getControlCommand', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log('Response Data:', data);  // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
+          if (data.success) {
+              alert(`LED status updated to ${status}`);
+          } else {
+              alert('Failed to update LED status');
+          }
+      })
+      .catch(error => {
+          console.error('Error updating LED status:', error);
+          alert('Error updating LED status');
       });
-      if (response.ok) {
-        console.log("RGB controlled successfully");
-      } else {
-        console.log("Failed to control RGB");
-      }
-    } catch (error) {
-      console.error("Error controlling RGB:", error);
-    }
   };
 
-  const controlBuzzer = async () => {
-    try {
-      const response = await fetch('/api/controlBuzzer', {
-        method: 'POST',
-      });
-      if (response.ok) {
-        console.log("Buzzer controlled successfully");
-      } else {
-        console.log("Failed to control Buzzer");
-      }
-    } catch (error) {
-      console.error("Error controlling Buzzer:", error);
-    }
-  };
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -55,8 +50,8 @@ export default function Nav() {
             </li>
           </ul>
           <form className="d-flex">
-            <button type="button" className="btn btn-outline-success me-md-2" onClick={controlRGB}>Control RGB</button>
-            <button type="button" className="btn btn-outline-primary" onClick={controlBuzzer}>Control Buzzer</button>
+            <button type="button" className="btn btn-outline-success me-md-2" onClick={() => updateLEDStatus('RGB_ON')}>Control RGB</button>
+            <button type="button" className="btn btn-outline-primary" onClick={() => updateLEDStatus('BUZZER_ON')}>Control Buzzer</button>
           </form>
         </div>
       </div>
