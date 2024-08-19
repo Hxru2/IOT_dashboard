@@ -1,35 +1,53 @@
-import dbConnect from '../dbConnect';
+import { Client } from 'pg';
 import dotenv from 'dotenv';
-import { Client } from 'pg';  // Import Client from pg
 
 dotenv.config();
 
-export default async function handler(req, res) {
-    let client;
-    try {
-        // Connect to the database using dbConnect
-        client = await dbConnect();
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+});
 
-        // Query the latest command
+// Connect to the database once
+client.connect();
+
+// src/app/api/route.js
+// -------------------------------------------------------------------------------------
+export async function GET() {
+    try {
         const result = await client.query(`
-            SELECT "command"
+            SELECT command
             FROM "NRD012"
             ORDER BY "date" DESC
             LIMIT 1
         `);
 
         if (result.rows.length > 0) {
-            res.status(200).json(result.rows[0]);
+            return new Response(JSON.stringify(result.rows[0]), {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache',
+                },
+            });
         } else {
-            res.status(404).json({ message: 'No commands found' });
+            return new Response(JSON.stringify({ message: "No commands found" }, {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache',
+                },
+            }));
         }
     } catch (error) {
-        console.error("Error fetching control command:", error);
-        res.status(500).json({ error: 'Failed to fetch control command' });
-    } finally {
-        // Ensure the database connection is closed
-        if (client) {
-            await client.end();
-        }
+        console.error('GET Error:', error.stack || error.message);
+        return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+            status: 500,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+            },
+        });
     }
 }
