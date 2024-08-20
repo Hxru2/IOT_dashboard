@@ -1,30 +1,44 @@
 "use client";
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useEffect, useState } from 'react';
+import { Bar, Line } from 'react-chartjs-2';
 import styles from './Dashboard.module.css';
-import { useEffect, useState } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 
 // Register necessary components for Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-  const [lastdata, setLastData] = useState([]);
+  const [lastData, setLastData] = useState([]);
+  const [allData, setAllData] = useState([]);
 
-  async function fetchlastData() {
+  // Fetch latest data for the bar charts
+  async function fetchLastData() {
     try {
       const res = await fetch("/api/lastestData");
       const data = await res.json();
       setLastData(data);
-      console.log(data);
+      console.log("Latest Data:", data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching latest data:", error);
     }
   }
 
-  const chartData1 = lastdata.length > 0 ? {
+  // Fetch all data for the line charts
+  async function fetchAllData() {
+    try {
+      const res = await fetch("/api/alldata");
+      const data = await res.json();
+      setAllData(data);
+      console.log("All Data:", data);
+    } catch (error) {
+      console.error("Error fetching all data:", error);
+    }
+  }
+
+  // Process data for bar charts
+  const chartData1 = lastData.length > 0 ? {
     labels: ['LDR', 'VR'],
-    datasets: lastdata.map((dataPoint, index) => ({
+    datasets: lastData.map((dataPoint, index) => ({
       label: `Data Point ${index + 1}`,
       data: [dataPoint.ldr, dataPoint.vr],
       backgroundColor: [
@@ -34,9 +48,9 @@ export default function Dashboard() {
     })),
   } : null;
 
-  const chartData2 = lastdata.length > 0 ? {
+  const chartData2 = lastData.length > 0 ? {
     labels: ['Temperature', 'Distance'],
-    datasets: lastdata.map((dataPoint, index) => ({
+    datasets: lastData.map((dataPoint, index) => ({
       label: `Data Point ${index + 1}`,
       data: [dataPoint.temp, dataPoint.distance],
       backgroundColor: [
@@ -44,6 +58,59 @@ export default function Dashboard() {
         'rgba(255, 99, 132, 0.6)',
       ],
     })),
+  } : null;
+
+  // Process data for line charts
+  const lineChartData1 = allData.length > 0 ? {
+    labels: allData.map((dataPoint) => 
+      new Date(dataPoint.date).toLocaleString('th-TH', {
+        timeZone: 'Asia/Bangkok',
+        dateStyle: 'short',
+        timeStyle: 'short',
+      })
+    ),
+    datasets: [
+      {
+        label: 'LDR',
+        data: allData.map((dataPoint) => dataPoint.ldr),
+        fill: false,
+        borderColor: 'rgba(75, 192, 192, 0.6)',
+        tension: 0.1,
+      },
+      {
+        label: 'VR',
+        data: allData.map((dataPoint) => dataPoint.vr),
+        fill: false,
+        borderColor: 'rgba(153, 102, 255, 0.6)',
+        tension: 0.1,
+      },
+    ],
+  } : null;
+
+  const lineChartData2 = allData.length > 0 ? {
+    labels: allData.map((dataPoint) => 
+      new Date(dataPoint.date).toLocaleString('th-TH', {
+        timeZone: 'Asia/Bangkok',
+        dateStyle: 'short',
+        timeStyle: 'short',
+      })
+    ),
+    datasets: [
+      {
+        label: 'Temperature',
+        data: allData.map((dataPoint) => dataPoint.temp),
+        fill: false,
+        borderColor: 'rgba(255, 159, 64, 0.6)',
+        tension: 0.1,
+      },
+      {
+        label: 'Distance',
+        data: allData.map((dataPoint) => dataPoint.distance),
+        fill: false,
+        borderColor: 'rgba(255, 99, 132, 0.6)',
+        tension: 0.1,
+      },
+    ],
   } : null;
 
   const chartOptions = {
@@ -59,16 +126,30 @@ export default function Dashboard() {
     },
   };
 
+  const lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Sensor Data Trends Over Time',
+      },
+    },
+  };
+
   useEffect(() => {
-    fetchlastData();
+    fetchLastData();
+    fetchAllData();
   }, []);
 
   return (
     <div className={styles.dashboard}>
-      <h1 className={styles.heading}>Latest Sensor Data</h1>
+      <h1 className={styles.heading}>Dashboard</h1>
 
       <div className={styles.chartRow}>
-        {lastdata.length > 0 && chartData1 ? (
+        {lastData.length > 0 && chartData1 ? (
           <div className={styles.chartContainer}>
             <h2>LDR and VR</h2>
             <Bar data={chartData1} options={chartOptions} />
@@ -77,7 +158,7 @@ export default function Dashboard() {
           <p>No data available for LDR and VR chart</p>
         )}
 
-        {lastdata.length > 0 && chartData2 ? (
+        {lastData.length > 0 && chartData2 ? (
           <div className={styles.chartContainer}>
             <h2>Temperature and Distance</h2>
             <Bar data={chartData2} options={chartOptions} />
@@ -87,6 +168,26 @@ export default function Dashboard() {
         )}
       </div>
 
+      <div className={styles.chartRow}>
+        {allData.length > 0 && lineChartData1 ? (
+          <div className={styles.chartContainer}>
+            <h2>LDR and VR Trends</h2>
+            <Line data={lineChartData1} options={lineChartOptions} />
+          </div>
+        ) : (
+          <p>No data available for the LDR and VR line chart</p>
+        )}
+
+        {allData.length > 0 && lineChartData2 ? (
+          <div className={styles.chartContainer}>
+            <h2>Temperature and Distance Trends</h2>
+            <Line data={lineChartData2} options={lineChartOptions} />
+          </div>
+        ) : (
+          <p>No data available for the Temperature and Distance line chart</p>
+        )}
+      </div>
+      <h1 className={styles.heading}>Lastest Data</h1>
       <table className={`table table-striped table-bordered ${styles.table}`}>
         <thead className="thead-dark">
           <tr>
@@ -99,7 +200,7 @@ export default function Dashboard() {
           </tr>
         </thead>
         <tbody>
-          {lastdata.map((data) => (
+          {lastData.map((data) => (
             <tr key={data.id}>
               <td>{data.id}</td>
               <td>{data.ldr}</td>
