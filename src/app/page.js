@@ -4,6 +4,21 @@ import { Bar, Line } from 'react-chartjs-2';
 import styles from './Dashboard.module.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 
+useEffect(() => {
+  // Fetch data on component mount
+  fetchLastData();
+  fetchAllData();
+
+  // Set up an interval to refresh data every 10 seconds (adjust as needed)
+  const intervalId = setInterval(() => {
+    fetchLastData();
+    fetchAllData();
+  }, 10000); // 10000 ms = 10 seconds
+
+  // Clear the interval when the component unmounts
+  return () => clearInterval(intervalId);
+}, []);
+
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
