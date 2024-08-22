@@ -4,20 +4,6 @@ import { Bar, Line } from 'react-chartjs-2';
 import styles from './Dashboard.module.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 
-useEffect(() => {
-  // Fetch data on component mount
-  fetchLastData();
-  fetchAllData();
-
-  // Set up an interval to refresh data every 10 seconds (adjust as needed)
-  const intervalId = setInterval(() => {
-    fetchLastData();
-    fetchAllData();
-  }, 10000); // 10000 ms = 10 seconds
-
-  // Clear the interval when the component unmounts
-  return () => clearInterval(intervalId);
-}, []);
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
@@ -215,15 +201,15 @@ export default function Dashboard() {
           </tr>
         </thead>
         <tbody>
-          {lastData.map((data) => (
-            <tr key={data.id}>
-              <td>{data.id}</td>
-              <td>{data.ldr}</td>
-              <td>{data.vr}</td>
-              <td>{data.temp}</td>
-              <td>{data.distance}</td>
+          {lastData.map((ldata) => (
+            <tr key={ldata.id}>
+              <td>{ldata.id}</td>
+              <td>{ldata.ldr}</td>
+              <td>{ldata.vr}</td>
+              <td>{ldata.temp}</td>
+              <td>{ldata.distance}</td>
               <td>
-                {new Date(data.date).toLocaleString('th-TH', {
+                {new Date(ldata.date).toLocaleString('th-TH', {
                   timeZone: 'Asia/Bangkok',
                   dateStyle: 'short',
                   timeStyle: 'short',
