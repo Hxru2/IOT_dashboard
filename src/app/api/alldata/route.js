@@ -10,6 +10,9 @@ const client = new Client({
 // Connect to the database once
 client.connect();
 
+export const dynamic = 'force-dynamic';
+
+
 // src/app/api/route.js
 // -------------------------------------------------------------------------------------
 export async function GET() {

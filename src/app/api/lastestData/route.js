@@ -10,6 +10,9 @@ const client = new Client({
 
 client.connect();
 
+export const dynamic = 'force-dynamic';
+
+
 export async function GET() {
   try {
     const result = await client.query(`SELECT * 
