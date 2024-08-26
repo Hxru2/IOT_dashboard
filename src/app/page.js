@@ -4,7 +4,6 @@ import { Bar, Line } from 'react-chartjs-2';
 import styles from './Dashboard.module.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 
-
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
@@ -143,6 +142,15 @@ export default function Dashboard() {
   useEffect(() => {
     fetchLastData();
     fetchAllData();
+
+    // Set up interval to fetch latest data every 10 seconds
+    const intervalId = setInterval(() => {
+      fetchLastData();
+      fetchAllData();
+    }, 10000); // 10 seconds
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -188,6 +196,7 @@ export default function Dashboard() {
           <p>No data available for the Temperature and Distance line chart</p>
         )}
       </div>
+
       <h1 className={styles.heading}>Lastest Data</h1>
       <table className={`table table-striped table-bordered ${styles.table}`}>
         <thead className="thead-dark">
