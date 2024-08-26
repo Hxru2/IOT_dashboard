@@ -4,6 +4,9 @@ import { Bar, Line } from 'react-chartjs-2';
 import styles from './Dashboard.module.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 
+// Force dynamic rendering in Next.js
+export const dynamic = 'force-dynamic';
+
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
