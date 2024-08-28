@@ -27,7 +27,7 @@ export default async function handler(req, res) {
             const updateQuery = `
                 UPDATE "NRD012"
                 SET att = att + 1
-                WHERE id = $87
+                WHERE id = $1
             `;
             const values = [id];
 
