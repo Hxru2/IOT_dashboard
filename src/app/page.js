@@ -13,6 +13,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 export default function Dashboard() {
   const [lastData, setLastData] = useState([]);
   const [allData, setAllData] = useState([]);
+  const [attackCount, setAttackCount] = useState(null);
 
   // Fetch latest data for the bar charts
   async function fetchLastData() {
@@ -35,6 +36,17 @@ export default function Dashboard() {
       console.log("All Data:", data);
     } catch (error) {
       console.error("Error fetching all data:", error);
+    }
+  }
+
+  async function fetchAttackCount() {
+    try {
+      const res = await fetch("/api/attackCount");  // Replace with actual API endpoint
+      const data = await res.json();
+      setAttackCount(data.att);  // Assuming the API returns an object with 'att' key
+      console.log("Attack Count:", data.att);
+    } catch (error) {
+      console.error("Error fetching attack count:", error);
     }
   }
 
@@ -145,11 +157,13 @@ export default function Dashboard() {
   useEffect(() => {
     fetchLastData();
     fetchAllData();
+    fetchAttackCount();
 
     // Set up interval to fetch latest data every 10 seconds
     const intervalId = setInterval(() => {
       fetchLastData();
       fetchAllData();
+      fetchAttackCount();
     }, 10000); // 10 seconds
 
     // Clear interval on component unmount
@@ -200,6 +214,17 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* Display the attack count */}
+      <div className={styles.attackCountContainer}>
+        <h2>Number of Attacks</h2>
+        {attackCount !== null ? (
+          <p className={styles.attackCount}>{attackCount}</p>
+        ) : (
+          <p>Loading attack data...</p>
+        )}
+      </div>
+
+        
       <h1 className={styles.heading}>Lastest Data</h1>
       <table className={`table table-striped table-bordered ${styles.table}`}>
         <thead className="thead-dark">
