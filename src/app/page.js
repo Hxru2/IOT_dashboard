@@ -186,11 +186,11 @@ export default function Dashboard() {
 
         {lastData.length > 0 && chartData2 ? (
           <div className={styles.chartContainer}>
-            <h2>Temperature and Distance</h2>
+            <h2>Temperature and Humidity</h2>
             <Bar data={chartData2} options={chartOptions} />
           </div>
         ) : (
-          <p>No data available for Temperature and Distance chart</p>
+          <p>No data available for Temperature and Humidity chart</p>
         )}
       </div>
 
@@ -206,11 +206,11 @@ export default function Dashboard() {
 
         {allData.length > 0 && lineChartData2 ? (
           <div className={styles.chartContainer}>
-            <h2>Temperature and Distance Trends</h2>
+            <h2>Temperature and Humidity Trends</h2>
             <Line data={lineChartData2} options={lineChartOptions} />
           </div>
         ) : (
-          <p>No data available for the Temperature and Distance line chart</p>
+          <p>No data available for the Temperature and Humidity line chart</p>
         )}
       </div>
 
@@ -233,7 +233,7 @@ export default function Dashboard() {
             <th>LDR</th>
             <th>VR</th>
             <th>Temperature</th>
-            <th>Distance</th>
+            <th>Humidity</th>
             <th>Create At</th>
           </tr>
         </thead>
